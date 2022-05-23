@@ -6,6 +6,18 @@
 
 _Exhaustive deps warning ... are you lying about your dependencies?_
 
+## What this section covers:
+
+- Fixing state/prop dependency issues
+  - by including all deps
+  - by reducing deps
+    - using the `useReducer` hook
+    - using the "Functional updater form"
+- Fixing function dependency issues
+  - with scoping
+  - with hoisting
+  - with `useCallback`
+
 ### Why you should fix this
 
 > "if you specify deps, **all values from inside your component that are used by the effect must be there.** Including props, state, functions — anything in your component. [Though,] sometimes when you do that, it causes a problem. For example, maybe you see an infinite refetching loop, or a socket is recreated too often. **The solution to that problem is _NOT_ to remove a dependency.**" - Dan Abramov
@@ -18,8 +30,8 @@ When you omit values from your effect's dependency array you open the door to li
 
 ### How you can fix this
 
-option 1: **Include _all_ of the values inside the component that are used inside the effect.** -- ideal
-option 2: **Reduce the amount of dependencies.** -- using `useReducer` or "functional updater form."
+- option 1: **Include _all_ of the values inside the component that are used inside the effect.** -- ideal
+- option 2: **Reduce the amount of dependencies.** -- using `useReducer` or "functional updater form."
 
 ### Using `useReducer`
 
