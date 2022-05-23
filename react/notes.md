@@ -31,29 +31,29 @@ When you omit values from your effect's dependency array you open the door to li
   - Instead of reading the state _inside_ an effect, it dispatches an _action_ that encodes the information about what _happened_. This allows our effect to stay **decoupled** from the reducer's state. Our effect doesn't care _how_ we updated the state, it just tells us about what _happened_ and **the reducer centralizes the update logic.**
 
 <details>
-    <summary>Example:</summary>
+    <summary>🚀 Example:</summary>
 
 #### Before (with state)
 
-```
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCount(c => c + step);
-    }, 1000);
-    return () => clearInterval(id);
-  }, [step]);
+```js
+useEffect(() => {
+  const id = setInterval(() => {
+    setCount((c) => c + step);
+  }, 1000);
+  return () => clearInterval(id);
+}, [step]);
 ```
 
 #### After
 
-```
+```js
 // component
 const [state, dispatch] = useReducer(reducer, initialState);
 const { count, step } = state;
 
 useEffect(() => {
   const id = setInterval(() => {
-    dispatch({ type: 'tick' }); // Instead of setCount(c => c + step);
+    dispatch({ type: "tick" }); // Instead of setCount(c => c + step);
   }, 1000);
   return () => clearInterval(id);
 }, [dispatch]);
@@ -66,9 +66,9 @@ const initialState = {
 
 function reducer(state, action) {
   const { count, step } = state;
-  if (action.type === 'tick') {
+  if (action.type === "tick") {
     return { count: count + step, step };
-  } else if (action.type === 'step') {
+  } else if (action.type === "step") {
     return { count, step: action.step };
   } else {
     throw new Error();
@@ -86,28 +86,29 @@ function reducer(state, action) {
 - You're essentially telling React to increment the state, -- whatever it is right now. It doesn't need to know the current `count` in state, React _already_ knows it, just increment it whatever it may be.
 
 <details>
-    <summary>Example:</summary>
+    <summary>🚀 Example:</summary>
 
 #### Before (with state)
 
-```
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCount(count + 1);
-    }, 1000);
-    return () => clearInterval(id);
-  }, [count]);
+```js
+useEffect(() => {
+  const id = setInterval(() => {
+    setCount(count + 1);
+  }, 1000);
+  return () => clearInterval(id);
+}, [count]);
 ```
 
 #### After
 
-```
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCount(c => c + 1);
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
+```js
+useEffect(() => {
+  const id = setInterval(() => {
+    setCount((c) => c + 1);
+  }, 1000);
+  return () => clearInterval(id);
+  // no deps!
+}, []);
 ```
 
 </details>
