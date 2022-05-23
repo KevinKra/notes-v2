@@ -1,6 +1,10 @@
+#### sources:
+
+[Dan Abramov's blog: Overreacted](https://overreacted.io/a-complete-guide-to-useeffect/)
+
 # Dependency Triage
 
-> Exhaustive deps warning ... are you lying about your dependencies?
+_Exhaustive deps warning ... are you lying about your dependencies?_
 
 ### Why you should fix this
 
@@ -10,14 +14,12 @@ When you omit values from your effect's dependency array you open the door to li
 
 ## Props/State Triage
 
-> Instead of reading the state inside an effect, dispatch an action that encodes the information about what happened. This allows our effect to stay decoupled from the state. Our effect doesn’t care _how_ we update the state, it just tells us about what happened.
+> "Instead of reading the state inside an effect, dispatch an action that encodes the information about what happened. This allows our effect to stay decoupled from the state. Our effect doesn’t care _how_ we update the state, it just tells us about what happened." - Dan Abramov
 
 ### How you can fix this
 
-- **Two approaches:**
-
-  1. Include _all_ of the values inside the component that are used inside the effect. -- ideal
-  1. Reduce the amount of dependencies. -- using `useReducer` or "functional updater form."
+option 1: **Include _all_ of the values inside the component that are used inside the effect.** -- ideal
+option 2: **Reduce the amount of dependencies.** -- using `useReducer` or "functional updater form."
 
 ### Using `useReducer`
 
@@ -85,7 +87,7 @@ useEffect(() => {
 </details>
 
 <details>
-    <summary>Functional Updater form</summary>
+    <summary>Functional updater form</summary>
 
 #### Before (with state)
 
