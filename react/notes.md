@@ -90,7 +90,7 @@ useEffect(() => {
 </details>
 
 <details>
-    <summary>Functional Updater</summary>
+    <summary>Functional Updater form</summary>
 
 #### Before (with state)
 
@@ -142,13 +142,12 @@ You don't want to lie about your deps and you also want to avoid bugs. What step
 <details>
     <summary>Scoped</summary>
 
-#### Before
-
 ```jsx
 function SearchResults() {
   const [query, setQuery] = useState("react");
 
   useEffect(() => {
+    // yay, I live inside the useEffect and 'query' is a dep!
     function getFetchUrl() {
       return "https://hn.algolia.com/api/v1/search?query=" + query;
     }
@@ -173,6 +172,7 @@ function SearchResults() {
 #### Before
 
 ```jsx
+// component
 function SearchResults() {
   // 🔴 Re-triggers all effects on every render
   function getFetchUrl(query) {
