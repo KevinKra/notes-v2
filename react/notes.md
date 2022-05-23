@@ -31,11 +31,11 @@ When you omit values from your effect's dependency array you open the door to li
   - Instead of reading the state _inside_ an effect, it dispatches an _action_ that encodes the information about what _happened_. This allows our effect to stay **decoupled** from the reducer's state. Our effect doesn't care _how_ we updated the state, it just tells us about what _happened_ and **the reducer centralizes the update logic.**
 
 <details>
-    <summary>🚀 Example:</summary>
+    <summary>🚀 `useReducer` Example:</summary>
 
 #### Before (with state)
 
-```js
+```jsx
 useEffect(() => {
   const id = setInterval(() => {
     setCount((c) => c + step);
@@ -46,7 +46,7 @@ useEffect(() => {
 
 #### After
 
-```js
+```jsx
 // reducer file
 const initialState = {
   count: 0,
@@ -88,11 +88,11 @@ useEffect(() => {
 - You're essentially telling React to increment the state, -- whatever it is right now. It doesn't need to know the current `count` in state, React _already_ knows it, just increment it whatever it may be.
 
 <details>
-    <summary>🚀 Example:</summary>
+    <summary>🚀 FUF Example:</summary>
 
 #### Before (with state)
 
-```js
+```jsx
 useEffect(() => {
   const id = setInterval(() => {
     setCount(count + 1);
@@ -103,7 +103,7 @@ useEffect(() => {
 
 #### After
 
-```js
+```jsx
 useEffect(() => {
   const id = setInterval(() => {
     setCount((c) => c + 1);
