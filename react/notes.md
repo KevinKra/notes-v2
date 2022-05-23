@@ -47,18 +47,7 @@ useEffect(() => {
 #### After
 
 ```js
-// component
-const [state, dispatch] = useReducer(reducer, initialState);
-const { count, step } = state;
-
-useEffect(() => {
-  const id = setInterval(() => {
-    dispatch({ type: "tick" }); // Instead of setCount(c => c + step);
-  }, 1000);
-  return () => clearInterval(id);
-}, [dispatch]);
-
-// reducer
+// reducer file
 const initialState = {
   count: 0,
   step: 1,
@@ -74,6 +63,19 @@ function reducer(state, action) {
     throw new Error();
   }
 }
+
+// ====
+
+// component file
+const [state, dispatch] = useReducer(reducer, initialState);
+const { count, step } = state;
+
+useEffect(() => {
+  const id = setInterval(() => {
+    dispatch({ type: "tick" }); // Instead of setCount(c => c + step);
+  }, 1000);
+  return () => clearInterval(id);
+}, [dispatch]);
 ```
 
 </details>
@@ -123,6 +125,32 @@ You don't want to lie about your deps and you also want to avoid bugs. What step
 
 - If used in one `useEffect` hook, just include the function within the `useEffect`'s scope
 
+<details>
+    <summary>🚀 Scoping Example:</summary>
+
+#### Before
+
+```jsx
+function SearchResults() {
+  const [query, setQuery] = useState("react");
+
+  useEffect(() => {
+    function getFetchUrl() {
+      return "https://hn.algolia.com/api/v1/search?query=" + query;
+    }
+
+    async function fetchData() {
+      const result = await axios(getFetchUrl());
+      setData(result.data);
+    }
+
+    fetchData();
+  }, [query]); // ✅ Deps are OK
+
+  // ...
+}
+```
+
 ### Function is used within _multiple_ Effects
 
 - ⚠️ **Hoist it outside of the component** ⚠️
@@ -132,6 +160,107 @@ You don't want to lie about your deps and you also want to avoid bugs. What step
   - This adds another layer of dependency checks and won't trigger the `useEffect` deps unless the `useCallback`'s dep itself is triggered by a change.
   - If you need to use props or state in the component, simply add them as dependencies within this `useCallback`.
   - A function wrapped in `useCallback` in a parent component, when passed into a child as a prop, the child will remain synchronized with the parent and won't re-render unless the `useCallback` dep values change.
+
+<details>
+    <summary>🚀 Hoisting Example:</summary>
+
+#### Before
+
+```jsx
+function SearchResults() {
+  // 🔴 Re-triggers all effects on every render
+  function getFetchUrl(query) {
+    return "https://hn.algolia.com/api/v1/search?query=" + query;
+  }
+
+  useEffect(() => {
+    const url = getFetchUrl("react");
+    // ... Fetch data and do something ...
+  }, [getFetchUrl]); // 🚧 Deps are correct but they change too often
+
+  useEffect(() => {
+    const url = getFetchUrl("redux");
+    // ... Fetch data and do something ...
+  }, [getFetchUrl]); // 🚧 Deps are correct but they change too often
+
+  // ...
+}
+```
+
+#### After
+
+```jsx
+// ✅ Not affected by the data flow
+function getFetchUrl(query) {
+  return "https://hn.algolia.com/api/v1/search?query=" + query;
+}
+
+// component
+function SearchResults() {
+  useEffect(() => {
+    const url = getFetchUrl("react");
+    // ... Fetch data and do something ...
+  }, []); // ✅ Deps are OK
+
+  useEffect(() => {
+    const url = getFetchUrl("redux");
+    // ... Fetch data and do something ...
+  }, []); // ✅ Deps are OK
+
+  // ...
+}
+```
+
+</details>
+
+<details>
+    <summary>🚀 `useCallBack` Example:</summary>
+
+#### Not using component state/props
+
+```jsx
+function SearchResults() {
+  // ✅ Preserves identity when its own deps are the same
+  const getFetchUrl = useCallback((query) => {
+    return "https://hn.algolia.com/api/v1/search?query=" + query;
+  }, []); // ✅ Callback deps are OK
+
+  useEffect(() => {
+    const url = getFetchUrl("react");
+    // ... Fetch data and do something ...
+  }, [getFetchUrl]); // ✅ Effect deps are OK
+
+  useEffect(() => {
+    const url = getFetchUrl("redux");
+    // ... Fetch data and do something ...
+  }, [getFetchUrl]); // ✅ Effect deps are OK
+
+  // ...
+}
+```
+
+#### Using component state/props
+
+```jsx
+function SearchResults() {
+  // We now have state that will be used in the getFetchUrl function
+  const [query, setQuery] = useState("react");
+
+  // ✅ Preserves identity until query changes
+  const getFetchUrl = useCallback(() => {
+    return "https://hn.algolia.com/api/v1/search?query=" + query;
+  }, [query]); // ✅ Callback deps are OK
+
+  useEffect(() => {
+    const url = getFetchUrl();
+    // ... Fetch data and do something ...
+  }, [getFetchUrl]); // ✅ Effect deps are OK
+
+  // ...
+}
+```
+
+</details>
 
 ---
 
