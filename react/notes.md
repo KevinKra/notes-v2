@@ -30,8 +30,17 @@ When you omit values from your effect's dependency array you open the door to li
 
   - Instead of reading the state _inside_ an effect, it dispatches an _action_ that encodes the information about what _happened_. This allows our effect to stay **decoupled** from the reducer's state. Our effect doesn't care _how_ we updated the state, it just tells us about what _happened_ and **the reducer centralizes the update logic.**
 
+### Using the "Functional updater form"
+
+> `setCount(c => c + 1)`
+
+- Your component has the information derived from the previous render, you can leverage that to update that state, albeit in a pretty limited manner.
+- You're essentially telling React to increment the state, -- whatever it is right now. It doesn't need to know the current `count` in state, React _already_ knows it, just increment it whatever it may be.
+
+### Examples:
+
 <details>
-    <summary>🚀 `useReducer` Example:</summary>
+    <summary>useReducer</summary>
 
 #### Before (with state)
 
@@ -80,15 +89,8 @@ useEffect(() => {
 
 </details>
 
-### Using the "Functional updater form"
-
-> `setCount(c => c + 1)`
-
-- Your component has the information derived from the previous render, you can leverage that to update that state, albeit in a pretty limited manner.
-- You're essentially telling React to increment the state, -- whatever it is right now. It doesn't need to know the current `count` in state, React _already_ knows it, just increment it whatever it may be.
-
 <details>
-    <summary>🚀 FUF Example:</summary>
+    <summary>Functional Updater</summary>
 
 #### Before (with state)
 
@@ -125,8 +127,20 @@ You don't want to lie about your deps and you also want to avoid bugs. What step
 
 - If used in one `useEffect` hook, just include the function within the `useEffect`'s scope
 
+### Function is used within _multiple_ Effects
+
+- ⚠️ **Hoist it outside of the component** ⚠️
+  - **ONLY:** If the function does not use _anything_ from the component's scope: props, state, etc.
+  - Does not need to be specified in the dependency array because it's not in the render scope and can't be effected by the data flow. It can't _accidentally_ depend on props or state.
+- **Wrap it with a `useCallback` hook within the component.**
+  - This adds another layer of dependency checks and won't trigger the `useEffect` deps unless the `useCallback`'s dep itself is triggered by a change.
+  - If you need to use props or state in the component, simply add them as dependencies within this `useCallback`.
+  - A function wrapped in `useCallback` in a parent component, when passed into a child as a prop, the child will remain synchronized with the parent and won't re-render unless the `useCallback` dep values change.
+
+### Examples:
+
 <details>
-    <summary>🚀 Scoping Example:</summary>
+    <summary>Scoped</summary>
 
 #### Before
 
@@ -151,18 +165,10 @@ function SearchResults() {
 }
 ```
 
-### Function is used within _multiple_ Effects
-
-- ⚠️ **Hoist it outside of the component** ⚠️
-  - **ONLY:** If the function does not use _anything_ from the component's scope: props, state, etc.
-  - Does not need to be specified in the dependency array because it's not in the render scope and can't be effected by the data flow. It can't _accidentally_ depend on props or state.
-- **Wrap it with a `useCallback` hook within the component.**
-  - This adds another layer of dependency checks and won't trigger the `useEffect` deps unless the `useCallback`'s dep itself is triggered by a change.
-  - If you need to use props or state in the component, simply add them as dependencies within this `useCallback`.
-  - A function wrapped in `useCallback` in a parent component, when passed into a child as a prop, the child will remain synchronized with the parent and won't re-render unless the `useCallback` dep values change.
+</details>
 
 <details>
-    <summary>🚀 Hoisting Example:</summary>
+    <summary>Hoisting</summary>
 
 #### Before
 
@@ -214,7 +220,7 @@ function SearchResults() {
 </details>
 
 <details>
-    <summary>🚀 `useCallBack` Example:</summary>
+    <summary>useCallBack</summary>
 
 #### Not using component state/props
 
