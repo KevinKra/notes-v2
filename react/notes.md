@@ -1,8 +1,3 @@
-functional updater form. How does it work, what is its benefit over using state and having it as an effect dep?
-useReducers help detach what from the effect? How is this powerful?
-why use useReducer?
-Decoupling Updates from Actions
-
 # Dependency Triage
 
 > Exhaustive deps warning ... are you lying about your dependencies?
@@ -37,7 +32,7 @@ When you omit values from your effect's dependency array you open the door to li
 - Your component has the information derived from the previous render, you can leverage that to update that state, albeit in a pretty limited manner.
 - You're essentially telling React to increment the state, -- whatever it is right now. It doesn't need to know the current `count` in state, React _already_ knows it, just increment it whatever it may be.
 
-### Examples:
+#### 🚀 Examples:
 
 <details>
     <summary>useReducer</summary>
@@ -137,7 +132,7 @@ You don't want to lie about your deps and you also want to avoid bugs. What step
   - If you need to use props or state in the component, simply add them as dependencies within this `useCallback`.
   - A function wrapped in `useCallback` in a parent component, when passed into a child as a prop, the child will remain synchronized with the parent and won't re-render unless the `useCallback` dep values change.
 
-### Examples:
+#### 🚀 Examples:
 
 <details>
     <summary>Scoped</summary>
